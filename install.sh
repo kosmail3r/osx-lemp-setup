@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install script for LEMP on OS X - by ronilaukkarinen.
+# Install script for LEMP on OS X - by kosmailer, rewrited script ronilaukkarinen.
 
 # Helpers:
 currentfile=`basename $0`
@@ -123,29 +123,47 @@ location ~* ^.+\.(ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|rss|atom|jpg|jpeg|gif|pn
        access_log off; log_not_found off; expires max;
 }" > "/etc/nginx/global/wordpress.conf"
 sudo echo "server {
-        listen 80 default_server;
-        root html;
-        index index.html index.htm index.php;
-        server_name localhost;
-        include php7.conf;
-        #include global/wordpress.conf;
-}" > "/etc/nginx/sites-available/default"
+                   listen 80;
+                   listen [::]:80;
+
+                   server_name localhost;
+
+                   root /sites/default;
+
+                   index index.php index.html index.htm;
+
+                   location / {
+                           # First attempt to serve request as file, then
+                           # as directory, then fall back to displaying a 404.
+                           try_files $uri $uri/ /index.php?$query_string;
+                           # Uncomment to enable naxsi on this location
+                           # include /etc/nginx/naxsi.rules
+                   }
+
+                   location ~ \.php {
+                           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                           include fastcgi_params;
+                           fastcgi_pass 127.0.0.1:9000;
+                           fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                           fastcgi_buffers 16 16k;
+                           fastcgi_buffer_size 32k;
+                   }
+           }" > "/etc/nginx/sites-available/default"
 sudo ln -sfnv /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 echo "${yellow}Installing PHP.${txtreset}"
-brew tap homebrew/dupes
-brew tap homebrew/versions
-brew tap homebrew/homebrew-php
-brew install php70
+brew install php71  --with-imap
+brew install php71-xdebug
+brew install php71-mongodb
 mkdir -p ~/Library/LaunchAgents
-cp /usr/local/opt/php70/homebrew.mxcl.php70.plist ~/Library/LaunchAgents/
-launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php70.plist
+cp /usr/local/opt/php71/homebrew.mxcl.php71.plist ~/Library/LaunchAgents/
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php71.plist
 lsof -Pni4 | grep LISTEN | grep php
-sudo touch /var/log/fpm7.0-php.slow.log
-sudo chmod 775 /var/log/fpm7.0-php.slow.log
-sudo chown "$USER":staff /var/log/fpm7.0-php.slow.log
-sudo touch /var/log/fpm7.0-php.www.log
-sudo chmod 775 /var/log/fpm7.0-php.www.log
-sudo chown "$USER":staff /var/log/fpm7.0-php.www.log
+sudo touch /var/log/fpm7.1-php.slow.log
+sudo chmod 775 /var/log/fpm7.1-php.slow.log
+sudo chown "$USER":staff /var/log/fpm7.1-php.slow.log
+sudo touch /var/log/fpm7.1-php.www.log
+sudo chmod 775 /var/log/fpm7.1-php.www.log
+sudo chown "$USER":staff /var/log/fpm7.1-php.www.log
 echo "${boldgreen}PHP installed and running.${txtreset}"
 echo "${yellow}Installing MariaDB.${txtreset}"
 brew install mariadb
@@ -164,8 +182,8 @@ sudo brew services stop dnsmasq
 sudo brew services start dnsmasq
 sudo brew services stop nginx
 sudo brew services start nginx
-sudo brew services stop php70
-sudo brew services start php70
+sudo brew services stop php71
+sudo brew services start php71
 brew services stop mariadb
 brew services start mariadb
 sudo brew services list

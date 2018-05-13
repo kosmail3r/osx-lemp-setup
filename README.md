@@ -3,7 +3,7 @@
 For *Front End development*, a full Vagrant box is not always needed. If you have a new Macbook Pro, you can install local LEMP (Linux, nginx, MariaDB and PHP) with this single liner (if wget is not installed, run `brew install wget` first):
 
 ```` bash
-wget -O - https://raw.githubusercontent.com/digitoimistodude/osx-lemp-setup/master/install.sh | bash
+wget -O - https://raw.githubusercontent.com/kosmail3r/osx-lemp-setup/master/install.sh | bash
 ````
 
 **Please note:** Don't trust blindly to the script, use only if you know what you are doing. You can view the file [here](https://github.com/digitoimistodude/osx-lemp-setup/blob/master/install.sh) if having doubts what commands are being run. However, script is tested working many times and should be safe to run even if you have some or all of the components already installed.
@@ -50,8 +50,32 @@ For mysql, remember to run `mysql_secure_installation`.
 
 After that, get to know [dudestack](https://github.com/digitoimistodude/dudestack) to get everything up and running smoothly. Current version of dudestack supports OS X LEMP stack.
 
-You should remember to add vhosts to your /etc/hosts file, for example: `127.0.0.1 site.dev`. Also, consider adding these bash aliases for easy stopping and starting services:
+For using X-debug in php storm add into /usr/local/etc/php/7.1/php.ini
 
+```` XDEBUG
+;;;;;;;;;;;;;;;;;;;
+;      XDEBUG     ;
+;;;;;;;;;;;;;;;;;;;
+
+zend_extension="xdebug.so"
+xdebug.remote_enable = 1
+xdebug.remote_autostart = 1
+xdebug.remote_port = 9001
+xdebug.remote_connect_back = 1
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_dir = "%sprogdir%/userdata/temp/xdebug/"
+xdebug.profiler_output_name = "cachegrind.out.%H%R"
+xdebug.idekey = "PHPSTORM"
+````
+
+You should remember to add vhosts to your /etc/hosts file, for example: `127.0.0.1 site.dev`. Also, consider adding these bash aliases for easy stopping and starting services:
+Add these lines using
+ 
+ ````nano .bash_profile````
+ then
+```` source ~/.bash_profile````
+ 
 ```` bash
 alias nginx.start='sudo brew services start nginx'
 alias nginx.stop='sudo brew services stop nginx'
@@ -62,6 +86,6 @@ alias php-fpm.restart='php-fpm.stop && php-fpm.start'
 alias mysql.start='brew services start mariadb'
 alias mysql.stop='brew services stop mariadb'
 alias mysql.restart='mysql.stop && mysql.start'
-alias localserver.stop='mysql.stop && nginx.stop && php-fpm.stop'
-alias localserver.start='mysql.start && nginx.start && php-fpm.start'
+alias localserver.stop='mysql.stop && nginx.stop && php-fpm.stop brew services stop mongodb'
+alias localserver.start='mysql.start && nginx.start && php-fpm.start brew services start mongodb'
 ````
