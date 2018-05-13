@@ -8,10 +8,6 @@ wget -O - https://raw.githubusercontent.com/kosmail3r/osx-lemp-setup/master/inst
 
 **Please note:** Don't trust blindly to the script, use only if you know what you are doing. You can view the file [here](https://github.com/digitoimistodude/osx-lemp-setup/blob/master/install.sh) if having doubts what commands are being run. However, script is tested working many times and should be safe to run even if you have some or all of the components already installed.
 
-### Background
-
-Read the full story by [@ronilaukkarinen](https://github.com/ronilaukkarinen): **[Moving from Vagrant to a LEMP stack directly on a Macbook Pro (for WordPress development)](https://medium.com/@rolle/moving-from-vagrant-to-a-lemp-stack-directly-on-a-macbook-pro-e935b1bc5a38)**
-
 ### Dependencies
 
 - [Homebrew](https://brew.sh/)
@@ -19,13 +15,13 @@ Read the full story by [@ronilaukkarinen](https://github.com/ronilaukkarinen): *
 
 ### Post install
 
-You may want to add your user and group correctly to `/usr/local/etc/php/7.0/php-fpm.d/www.conf` and set these to the bottom:
+You may want to add your user and group correctly to `/usr/local/etc/php/7.1/php-fpm.d/www.conf` and set these to the bottom:
 
 ```` nginx
 catch_workers_output = yes
 php_flag[display_errors] = On
-php_admin_value[error_log] = /var/log/fpm7.0-php.www.log 
-slowlog = /var/log/fpm7.0-php.slow.log 
+php_admin_value[error_log] = /var/log/fpm7.1-php.www.log 
+slowlog = /var/log/fpm7.1-php.slow.log 
 php_admin_flag[log_errors] = On
 php_admin_value[memory_limit] = 1024M
 request_slowlog_timeout = 10
@@ -80,8 +76,8 @@ Add these lines using
 alias nginx.start='sudo brew services start nginx'
 alias nginx.stop='sudo brew services stop nginx'
 alias nginx.restart='nginx.stop && nginx.start'
-alias php-fpm.start='sudo brew services start php70'
-alias php-fpm.stop='sudo brew services stop php70'
+alias php-fpm.start='sudo brew services start php71'
+alias php-fpm.stop='sudo brew services stop php71'
 alias php-fpm.restart='php-fpm.stop && php-fpm.start'
 alias mysql.start='brew services start mariadb'
 alias mysql.stop='brew services stop mariadb'
